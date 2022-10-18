@@ -25,18 +25,24 @@ class Inventario {
   }
 
   eliminar(codigo) {
-    if (this.buscar(codigo) != null) {
-      for (let i = 0; i < this.producto.length; i++) {
-        if (this.producto[i].codigo == codigo) {
-          for (let j = i; j < this.producto.length - 1; j++) {
-            this.producto[j] = this.producto[j + 1];
-          }
+    let aux;
+    let temp;
+    let num = +codigo;
+
+    if (+this.primero.codigo === num) {
+      this.primero = this.primero.next;
+    } else {
+      aux = this.primero;
+      while (aux.next != null) {
+        temp = aux.next;
+        if (+temp.codigo == num) {
+          aux.next = aux.next.next;
+        } else {
+          aux = aux.next;
         }
       }
-      this.producto.pop();
-    } else {
-      return null;
     }
+    return true;
   }
 
   listado() {
@@ -73,6 +79,8 @@ class Inventario {
       }
     }
   }
+
+  insertar(posicion, elemento) {}
 }
 
 class Producto {
@@ -81,6 +89,7 @@ class Producto {
     this.nombre = nombre;
     this.cantidad = cantidad;
     this.costo = costo;
+    this.next = null;
   }
 
   getInfo() {
