@@ -2,6 +2,7 @@ class Inventario {
   constructor() {
     this.producto = new Array();
     this.start = null;
+    this.primero;
   }
 
   agregar(nuevo) {
@@ -25,24 +26,26 @@ class Inventario {
   }
 
   eliminar(codigo) {
-    let aux;
-    let temp;
-    let num = +codigo;
+    let primero = 0;
+    let medio = 0;
+    let ultimo = this.producto.length - 1;
 
-    if (+this.primero.codigo === num) {
-      this.primero = this.primero.next;
-    } else {
-      aux = this.primero;
-      while (aux.next != null) {
-        temp = aux.next;
-        if (+temp.codigo == num) {
-          aux.next = aux.next.next;
-        } else {
-          aux = aux.next;
+    while (primero <= ultimo) {
+      medio = Math.floor((primero + ultimo) / 2);
+
+      if (this.producto[medio].getCodigo() === codigo) {
+        for (let a = medio; a < ultimo; a++) {
+          this.producto[a] = this.producto[a + 1];
         }
+        this.producto.pop();
+      } else if (this.producto[medio].getCodigo() > codigo) {
+        ultimo = medio - 1;
+      } else {
+        primero = medio + 1;
       }
     }
-    return true;
+
+    return null;
   }
 
   listado() {
@@ -80,7 +83,13 @@ class Inventario {
     }
   }
 
-  insertar(posicion, elemento) {}
+  insertar(posicion, producto) {
+    this.producto.length += 1;
+    for (let i = this.producto.length - 1; i >= producto; i--) {
+      this.producto[i] = this.producto[i - 1];
+    }
+    this.producto[producto] = posicion;
+  }
 }
 
 class Producto {
@@ -104,6 +113,22 @@ class Producto {
       Cantidad: ${this.cantidad}.<br>
       Costo: $${this.costo}.</h4>`);
   }
+
+  getCodigo() {
+    return this.codigo;
+  }
+
+  getNombre() {
+    return this.nombre;
+  }
+
+  getCantidad() {
+    return this.cantidad;
+  }
+
+  getCosto() {
+    return this.costo;
+  }
 }
 
 const inventario = new Inventario();
@@ -115,7 +140,6 @@ btnBuscar.addEventListener("click", () => {
   console.log(codigo);
   const producto = inventario.buscar(codigo);
   return `${producto.infoHTML()}`;
-  //alert(producto.getInfo());
 });
 
 const btnAgregar = document.getElementById("btnAgregar");
@@ -145,12 +169,31 @@ btnListarInverso.addEventListener("click", () => {
   ).innerHTML = `${inventario.listadoInverso()}`);
 });
 
-const btnEliminar = document.getElementById("btnEliminar");
-btnEliminar.addEventListener("click", () => {
-  const codigo = document.getElementById("txtCodigo").value;
+const eliminar = document.getElementById("btnEliminar");
+eliminar.addEventListener("click", () => {
+  let codigo = document.getElementById("txtCodigo").value;
+
   if (inventario.eliminar(codigo)) {
     document.getElementById(
       "listado"
     ).innerHTML = `<h3>SE HA ELIMINADO UN PRODUCTO</h3>`;
+  }
+});
+
+const btnInsertar = document.getElementById("btnInsertar");
+btnInsertar.addEventListener("click", () => {
+  codigo = document.getElementById("txtCodigo").value;
+  nombre = document.getElementById("txtNombre").value;
+  cantidad = document.getElementById("txtCantidad").value;
+  costo = document.getElementById("txtCosto").value;
+
+  let posicion = prompt("Escriba la posicion en que estara el producto:");
+
+  if (posicion != null) {
+    posicion = Number(posicion);
+
+    if (posicion <= 0) {
+      posicion = 1;
+    }
   }
 });
